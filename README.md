@@ -3,18 +3,18 @@
 The `root`, `data`, and `public` folders are intentionally kept at the top level.
 
 ## Structure
-- `root/` — Node/Express backend, TypeScript source, environment configuration and Docker Compose.
+- Top-level files — Node/Express backend, TypeScript source, environment configuration and Docker Compose.
 - `data/` — Prisma schema/seed and persistent photo-upload directory.
 - `public/` — integrated Motinder web app and admin dashboard, served by the backend.
 
 ## Run locally
-1. Copy `root/.env.example` to `root/.env` and set real secrets.
-2. Start PostgreSQL/PostGIS with `docker compose -f root/docker-compose.yml up -d`.
-3. From `root/`: `npm install`.
-4. From `root/`: `npm run prisma:generate`.
-5. From `root/`: `npm run prisma:migrate`.
-6. From `root/`: `npm run seed`.
-7. From `root/`: `npm run dev`.
+1. Copy `.env.example` to `.env` and set real secrets.
+2. Start PostgreSQL/PostGIS with `docker compose -f docker-compose.yml up -d`.
+3. From the project root: `npm install`.
+4. From the project root: `npm run prisma:generate`.
+5. From the project root: `npm run prisma:migrate`.
+6. From the project root: `npm run seed`.
+7. From the project root: `npm run dev`.
 8. Open `http://localhost:4000`.
 9. Admin dashboard: `http://localhost:4000/admin`.
 

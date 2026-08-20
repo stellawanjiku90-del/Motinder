@@ -28,8 +28,8 @@ app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'}}));
 app.use(cors({origin:process.env.FRONTEND_URL||'http://localhost:4000',credentials:true}));
 app.use(express.json({limit:'2mb'}));app.use(cookieParser());
 app.use('/uploads',express.static(uploadDir));
-app.use(express.static(path.resolve(process.cwd(),'../public')));
-app.get('/admin',(req,res)=>res.sendFile(path.resolve(process.cwd(),'../public/admin.html')));
+app.use(express.static(path.resolve(process.cwd(),'public')));
+app.get('/admin',(req,res)=>res.sendFile(path.resolve(process.cwd(),'public/admin.html')));
 app.use(rateLimit({windowMs:15*60*1000,max:500,standardHeaders:true,legacyHeaders:false}));
 
 const upload=multer({dest:uploadDir,limits:{fileSize:Number(process.env.MAX_UPLOAD_MB||8)*1024*1024},fileFilter:(_r,file,cb)=>cb(null,['image/jpeg','image/png','image/webp'].includes(file.mimetype))});
