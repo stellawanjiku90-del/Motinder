@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: motinder
+      POSTGRES_PASSWORD: motinder
+      POSTGRES_DB: motinder
+    ports:
+      - "5432:5432"
+    volumes:
+      - motinder_pg:/var/lib/postgresql/data
+volumes:
+  motinder_pg:
