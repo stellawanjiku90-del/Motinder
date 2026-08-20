@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#7c3aed" />
+  <title>Motinder — Real Connections</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="topbar">
+    <button class="brand" data-view="discover" aria-label="Motinder home">
+      <span class="brand-mark">♥</span><span>Motinder</span>
+    </button>
+    <nav class="desktop-nav">
+      <button data-view="discover">Discover</button>
+      <button data-view="likes">Likes <span class="badge">12</span></button>
+      <button data-view="matches">Matches <span class="badge">4</span></button>
+      <button data-view="messages">Messages <span class="badge">3</span></button>
+    </nav>
+    <div class="top-actions">
+      <button class="icon-btn" id="locationBtn" title="Use my location">⌖</button>
+      <button class="avatar-btn" data-view="profile"><span>ME</span></button><button class="outline" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="discover" class="view active">
+      <div class="hero-strip">
+        <div>
+          <p class="eyebrow">DISCOVER • GLOBAL</p>
+          <h1>Meet someone who <em>gets you.</em></h1>
+          <p class="sub">Smart matches, real people and meaningful conversations — wherever you are.</p>
+        </div>
+        <button class="filter-btn" id="filterBtn">☷ Filters</button>
+      </div>
+
+      <div class="discover-layout">
+        <aside class="side-card desktop-only">
+          <div class="side-title">Your preferences</div>
+          <label>Distance <span id="distanceLabel">25 km</span></label>
+          <input id="distanceRange" type="range" min="1" max="100" value="25">
+          <label>Age <span>22–35</span></label>
+          <div class="age-pills"><span>22</span><span>35</span></div>
+          <div class="toggle-row"><span>Verified only</span><input type="checkbox" id="verifiedOnly"></div>
+          <div class="toggle-row"><span>Global discovery</span><input type="checkbox" id="globalDiscovery" checked></div>
+          <button class="outline wide" id="smartMatchBtn">✦ Smart Match</button>
+        </aside>
+
+        <div class="deck-wrap">
+          <div id="cardStack" class="card-stack"></div>
+          <div class="swipe-actions">
+            <button class="round danger" id="passBtn" title="Pass">×</button>
+            <button class="round rewind" id="rewindBtn" title="Rewind">↶</button>
+            <button class="round super" id="superBtn" title="Super like">★</button>
+            <button class="round like" id="likeBtn" title="Like">♥</button>
+          </div>
+          <p class="swipe-hint">Swipe, tap a button, or open a profile for more details.</p>
+        </div>
+
+        <aside class="match-card desktop-only">
+          <div class="mini-heading">Why this match?</div>
+          <div class="score">94% <span>match</span></div>
+          <p>Strong compatibility based on interests, relationship goals and location.</p>
+          <div class="reason">♥ Both love travel</div>
+          <div class="reason">♪ Shared music taste</div>
+          <div class="reason">⌂ 8 km away</div>
+          <button class="primary wide" id="datePlanBtn">Plan a date</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="likes" class="view">
+      <div class="page-heading"><div><p class="eyebrow">PEOPLE INTERESTED IN YOU</p><h2>Your Likes</h2></div><button class="outline" id="likesFilter">Filters</button></div>
+      <div id="likesGrid" class="people-grid"></div>
+    </section>
+
+    <section id="matches" class="view">
+      <div class="page-heading"><div><p class="eyebrow">MUTUAL CONNECTIONS</p><h2>It's a match.</h2></div></div>
+      <div id="matchesGrid" class="people-grid"></div>
+    </section>
+
+    <section id="messages" class="view">
+      <div class="messages-shell">
+        <aside class="conversation-list">
+          <div class="conversation-title">Messages <span class="badge">3</span></div>
+          <div id="conversationItems"></div>
+        </aside>
+        <div class="chat-panel">
+          <div class="chat-header"><span class="chat-avatar">AM</span><div><strong>Amara</strong><small>Online • Nairobi</small></div><button class="icon-btn">⋮</button></div>
+          <div id="chatMessages" class="chat-messages"></div>
+          <div class="chat-input"><input id="messageInput" placeholder="Type a message…" /><button id="sendMessage" class="send">➤</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="profile" class="view">
+      <div class="profile-shell">
+        <div class="profile-cover"></div>
+        <div class="profile-main">
+          <div class="profile-photo">ZW</div>
+          <button class="outline edit-profile" id="photoUploadBtn">Add photo</button>
+          <h2>Zoë Mwangi <span class="verified">✓</span></h2>
+          <p class="muted">Your profile</p>
+          <p>Adventure seeker, coffee lover and always up for a good conversation.</p>
+          <div class="tags"><span>Travel</span><span>Music</span><span>Foodie</span><span>Hiking</span><span>Reading</span></div>
+          <div class="profile-grid">
+            <button data-view="premium" class="setting-card"><b>♛ Premium</b><small>Unlock more possibilities</small></button>
+            <button data-view="safety" class="setting-card"><b>♙ Safety Center</b><small>Privacy, verification & reports</small></button>
+            <button id="notificationsBtn" class="setting-card"><b>♧ Notifications</b><small>Push and email preferences</small></button>
+            <button id="privacyBtn" class="setting-card"><b>⌑ Privacy</b><small>Control what people see</small></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="premium" class="view">
+      <div class="premium-hero"><p class="eyebrow">MOTINDER PREMIUM</p><h2>More connection. <em>Less waiting.</em></h2><p>Powerful tools for people who are serious about meeting someone.</p></div>
+      <div class="plans">
+        <div class="plan"><h3>1 Month</h3><strong>$9.99</strong><small>/ month</small><button class="primary wide subscribe" data-plan="Monthly">Choose plan</button></div>
+        <div class="plan featured"><span class="popular">POPULAR</span><h3>3 Months</h3><strong>$24.99</strong><small>/ month</small><button class="primary wide subscribe" data-plan="3 Months">Choose plan</button></div>
+        <div class="plan"><h3>12 Months</h3><strong>$79.99</strong><small>/ month</small><button class="primary wide subscribe" data-plan="Annual">Choose plan</button></div>
+      </div>
+      <div class="feature-list"><span>✓ Unlimited likes</span><span>✓ See who likes you</span><span>✓ Advanced filters</span><span>✓ Global discovery</span><span>✓ Incognito mode</span><span>✓ Profile boost</span></div>
+    </section>
+
+    <section id="safety" class="view">
+      <div class="page-heading"><div><p class="eyebrow">YOUR SAFETY COMES FIRST</p><h2>Safety Center</h2></div></div>
+      <div class="safety-grid">
+        <button class="safety-card"><b>✓ Photo Verification</b><span>Show people you're real.</span></button>
+        <button class="safety-card"><b>⊘ Block Users</b><span>Control who can interact with you.</span></button>
+        <button class="safety-card"><b>⚑ Report a User</b><span>Report inappropriate behaviour.</span></button>
+        <button class="safety-card"><b>⌑ Privacy Settings</b><span>Manage visibility and location.</span></button>
+        <button class="safety-card danger-card" id="emergencyBtn"><b>Emergency support</b><span>Access your safety options.</span></button>
+      </div>
+    </section>
+
+    <section id="legal" class="view legal-page">
+      <div class="page-heading"><div><p class="eyebrow">MOTINDER LEGAL</p><h2 id="legalTitle">Terms of Service</h2></div></div>
+      <div id="legalContent" class="legal-content"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-main">
+      <div class="footer-brand"><div class="brand"><span class="brand-mark">♥</span><span>Motinder</span></div><p>Real people. Real connections. Real you.</p></div>
+      <div><b>Company</b><button>About us</button><button>Careers</button><button>Contact</button></div>
+      <div><b>Support</b><button data-view="safety">Safety Center</button><button>Help Center</button><button>Community Guidelines</button></div>
+      <div><b>Legal</b><button data-legal="terms">Terms of Service</button><button data-legal="privacy">Privacy Policy</button><button data-legal="refund">Refund Policy</button><button data-legal="cookies">Cookie Policy</button></div>
+      <div class="newsletter"><b>Stay connected</b><p>Tips, updates and new features.</p><div><input id="newsletterEmail" placeholder="Your email"><button id="newsletterBtn">Subscribe</button></div></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Motinder. All rights reserved.</span><span>English • Global</span></div>
+  </footer>
+
+  <nav class="mobile-nav">
+    <button data-view="discover">⌂<span>Discover</span></button>
+    <button data-view="likes">♥<span>Likes</span></button>
+    <button data-view="matches">✦<span>Matches</span></button>
+    <button data-view="messages">☵<span>Chat</span></button>
+    <button data-view="profile">●<span>Profile</span></button>
+  </nav>
+
+  <div id="filterModal" class="modal"><div class="modal-box"><button class="close" data-close="filterModal">×</button><h2>Discover filters</h2><label>Maximum distance <input type="range" min="1" max="100" value="25" id="modalDistance"></label><p id="modalDistanceValue">25 km</p><label>Age range</label><div class="range-pills"><span>18</span><span>22</span><span>30</span><span>35</span><span>50+</span></div><label>Looking for</label><div class="choice-row"><button class="choice active">Women</button><button class="choice">Men</button><button class="choice">Everyone</button></div><div class="toggle-row"><span>Verified only</span><input type="checkbox"></div><button class="primary wide" data-close="filterModal">Apply filters</button></div></div>
+
+  <div id="notifyModal" class="modal"><div class="modal-box"><button class="close" data-close="notifyModal">×</button><h2>Notifications</h2><p class="muted">Choose how Motinder keeps you updated.</p><div class="toggle-row"><span>Push notifications</span><input type="checkbox" id="pushToggle"></div><div class="toggle-row"><span>Email notifications</span><input type="checkbox" id="emailToggle" checked></div><button class="primary wide" id="saveNotify">Save preferences</button></div></div>
+
+  <script src="/socket.io/socket.io.js"></script><script src="app.js"></script><script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}</script>
+</body>
+</html>

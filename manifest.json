@@ -1,0 +1,9 @@
+{
+  "name": "Motinder",
+  "short_name": "Motinder",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fbfaff",
+  "theme_color": "#7c3aed",
+  "icons": []
+}
