@@ -1,0 +1,223 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+
+enum UserRole { USER ADMIN MODERATOR }
+enum UserStatus { ACTIVE SUSPENDED BANNED DELETED }
+enum VerificationType { EMAIL PHONE }
+enum VerificationStatus { PENDING VERIFIED FAILED }
+enum SwipeType { LIKE PASS SUPERLIKE }
+enum MatchStatus { ACTIVE UNMATCHED }
+enum MessageType { TEXT IMAGE SYSTEM }
+enum PhotoStatus { PENDING APPROVED REJECTED }
+enum ReportStatus { OPEN REVIEWING RESOLVED DISMISSED }
+enum ReportReason { HARASSMENT SPAM SCAM FAKE_PROFILE INAPPROPRIATE_CONTENT THREATS OTHER }
+enum SubscriptionStatus { PENDING ACTIVE PAUSED CANCELLED EXPIRED FAILED }
+enum PaymentStatus { PENDING PROCESSING COMPLETE FAILED REFUNDED PARTIAL_REFUND }
+
+model User {
+  id                String       @id @default(uuid())
+  email             String       @unique
+  phone             String?      @unique
+  passwordHash      String
+  firstName         String
+  lastName          String?
+  dateOfBirth       DateTime
+  gender            String?
+  interestedIn      String[]
+  bio               String?
+  city              String?
+  country           String?      @default("KE")
+  latitude          Float?
+  longitude         Float?
+  locationUpdatedAt DateTime?
+  relationshipGoal  String?
+  languages         String[]
+  interests         String[]
+  role              UserRole     @default(USER)
+  status            UserStatus   @default(ACTIVE)
+  emailVerified     Boolean      @default(false)
+  phoneVerified     Boolean      @default(false)
+  photoVerified     Boolean      @default(false)
+  incognito         Boolean      @default(false)
+  discoverable      Boolean      @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  lastActiveAt      DateTime?
+  photos            Photo[]
+  sentSwipes        Swipe[]      @relation("sentSwipes")
+  receivedSwipes    Swipe[]      @relation("receivedSwipes")
+  matchesA          Match[]      @relation("matchA")
+  matchesB          Match[]      @relation("matchB")
+  sentMessages      Message[]    @relation("sentMessages")
+  reportsMade       Report[]     @relation("reportsMade")
+  reportsReceived   Report[]     @relation("reportsReceived")
+  devices           Device[]
+  subscriptions     Subscription[]
+  payments          Payment[]
+  notifications     Notification[]
+  verificationCodes VerificationCode[]
+  refreshTokens     RefreshToken[]
+}
+
+model Photo {
+  id          String      @id @default(uuid())
+  userId      String
+  url         String
+  storageKey  String
+  status      PhotoStatus @default(PENDING)
+  isPrimary   Boolean     @default(false)
+  moderationNote String?
+  createdAt   DateTime    @default(now())
+  user        User        @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@index([userId, status])
+}
+
+model Swipe {
+  id          String    @id @default(uuid())
+  fromUserId  String
+  toUserId    String
+  type        SwipeType
+  createdAt   DateTime  @default(now())
+  fromUser   User      @relation("sentSwipes", fields:[fromUserId], references:[id], onDelete:Cascade)
+  toUser     User      @relation("receivedSwipes", fields:[toUserId], references:[id], onDelete:Cascade)
+  @@unique([fromUserId,toUserId])
+  @@index([toUserId,type])
+}
+
+model Match {
+  id          String      @id @default(uuid())
+  userAId     String
+  userBId     String
+  status      MatchStatus @default(ACTIVE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  userA       User        @relation("matchA", fields:[userAId], references:[id], onDelete:Cascade)
+  userB       User        @relation("matchB", fields:[userBId], references:[id], onDelete:Cascade)
+  messages    Message[]
+  @@unique([userAId,userBId])
+  @@index([userAId,status])
+  @@index([userBId,status])
+}
+
+model Message {
+  id         String      @id @default(uuid())
+  matchId    String
+  senderId   String
+  type       MessageType @default(TEXT)
+  body       String?
+  mediaUrl   String?
+  readAt     DateTime?
+  createdAt  DateTime    @default(now())
+  match      Match       @relation(fields:[matchId], references:[id], onDelete:Cascade)
+  sender     User        @relation("sentMessages", fields:[senderId], references:[id], onDelete:Cascade)
+  @@index([matchId,createdAt])
+}
+
+model Device {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  platform  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+
+model VerificationCode {
+  id         String             @id @default(uuid())
+  userId     String
+  type       VerificationType
+  target     String
+  codeHash   String
+  status     VerificationStatus @default(PENDING)
+  expiresAt  DateTime
+  attempts   Int                @default(0)
+  createdAt  DateTime           @default(now())
+  user       User               @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@index([userId,type,status])
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  userId     String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+
+model Subscription {
+  id                    String             @id @default(uuid())
+  userId                String
+  plan                  String
+  intasendPlanId        String?
+  intasendCustomerId    String?
+  intasendSubscriptionId String?
+  status                SubscriptionStatus @default(PENDING)
+  startsAt              DateTime?
+  endsAt                DateTime?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  User               @relation(fields:[userId], references:[id], onDelete:Cascade)
+  payments              Payment[]
+  @@index([userId,status])
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  userId         String
+  subscriptionId String?
+  provider       String        @default("intasend")
+  invoiceId      String?
+  reference      String        @unique
+  amount         Decimal       @db.Decimal(12,2)
+  currency       String        @default("KES")
+  status         PaymentStatus @default(PENDING)
+  rawPayload     Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields:[userId], references:[id], onDelete:Cascade)
+  subscription   Subscription? @relation(fields:[subscriptionId], references:[id], onDelete:SetNull)
+  @@index([invoiceId])
+  @@index([userId,status])
+}
+
+model Report {
+  id           String       @id @default(uuid())
+  reporterId   String
+  reportedId   String
+  reason       ReportReason
+  details      String?
+  status       ReportStatus @default(OPEN)
+  moderatorId  String?
+  resolution   String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  reporter     User         @relation("reportsMade", fields:[reporterId], references:[id], onDelete:Cascade)
+  reported     User         @relation("reportsReceived", fields:[reportedId], references:[id], onDelete:Cascade)
+  @@index([status,createdAt])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  body      String
+  type      String
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@index([userId,readAt,createdAt])
+}
+
+model AdminAuditLog {
+  id         String   @id @default(uuid())
+  adminId    String
+  action     String
+  targetType String
+  targetId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+}
